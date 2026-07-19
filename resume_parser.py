@@ -95,3 +95,16 @@ message_user = {
     "role": "user",
     "content": user_prompt
 }
+
+response_format = {
+    "type": "json_object"
+}
+
+messages = [message_system, message_user]
+
+response = client.chat.completions.create(model=model, messages=messages, response_format=response_format)
+answer = response.choices[0].message.content
+raw_json = answer
+# print(raw_json)
+
+
