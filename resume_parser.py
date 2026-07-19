@@ -64,3 +64,34 @@ class JobDescription(BaseModel):
 
 jobD_schema = JobDescription.model_json_schema()
 
+system_prompt = f"""
+    You are an expert HR Assistant.
+    Your job is to analyse the job descriptions and extract structured informations from them.
+
+    Return ONLY valid JSON matching this schema:
+    {jobD_schema}
+
+    IMPORTANT:
+    - Do not return the schema itself.
+    - Do NOT return fields like "properties","title" or "type".
+    - Fill the schema with the actual information extracted by the job description.
+
+    If minimum experience is not mentioned in the job description, return null for that field.
+    If information for a list is missing return an empty list for that field.
+    Do NOT invent any information that is not present in the job description.
+"""
+
+user_prompt = f"""
+    Analyze the following job description.
+    {job_description}
+"""
+
+message_system = {
+    "role": "system",
+    "content": system_prompt
+}
+
+message_user = {
+    "role": "user",
+    "content": user_prompt
+}
