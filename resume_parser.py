@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import time
 from dotenv import load_dotenv
 from groq import Groq
 from pydantic import BaseModel, Field
@@ -257,3 +258,61 @@ def read_docx(file_path):
                     text += cell.text + "\n"
     return text
 
+def read_resume(file_path):
+    if file_path.suffix.lower() == ".pdf":
+        return read_pdf(file_path)
+    elif file_path.suffix.lower() == ".docx":
+        return read_docx(file_path)
+    else:
+        return None
+
+
+
+resume_folder = Path("resumes")
+all_results = []
+for file_path in resume_folder.iterdir():
+    if file_path.suffix.lower() not in [".pdf", ".docx"]:
+        continue
+    print("\nProcessing:", file_path.name)
+    resume_text = read_resume(file_path)
+    parsed_resume=parse_resume(resume_text)
+    time.sleep(5)
+    result = final_score(job, parsed_resume)
+    time.sleep(5)
+    print("Score:", result.score)
+    all_results.append({
+        "name": parsed_resume.name,
+        "score": result.score,
+        "details": result.details
+    })
+
+all_results.sort(
+    key=lambda candidate: candidate["score"],
+    reverse=True
+)
+top_2 = all_results[:2]
+worst_2 = all_results[-2:]
+
+
+print("TOP 2 CANDIDATES")
+for candidate in top_2:
+
+    print(
+        candidate["name"],
+        "-",
+        candidate["score"],
+        "%"
+    )
+
+    print(candidate["details"])
+
+print("LOWEST 2 CANDIDATES")
+for candidate in worst_2:
+
+    print(
+        candidate["name"],
+        "-",
+        candidate["score"],
+        "%"
+    )
+    print(candidate["details"])
