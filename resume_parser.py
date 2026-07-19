@@ -54,3 +54,13 @@ orchestration tools (Docker, Kubernetes). Knowledge of modern authorization
 mechanisms, such as JSON Web Tokens (JWT). Experience working in an Agile/Scrum development environment.
 """
 
+class JobDescription(BaseModel):
+    role:str
+    required_skills:list[str]
+    preferred_skills:list[str]
+    minimum_experience:float|None
+    education_requirements:list[str]
+    responsibilities:list[str]
+
+jobD_schema = JobDescription.model_json_schema()
+
